@@ -1,0 +1,1281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English 12th HSC - Complete Study App</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            min-height: 100vh;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            color: white;
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header h1 {
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .nav-tabs {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .nav-tab {
+            padding: 0.5rem 1rem;
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: white;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nav-tab:hover, .nav-tab.active {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+
+        .content {
+            padding: 2rem;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .chapter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .chapter-card {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-left: 4px solid #3498db;
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+
+        .chapter-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        .chapter-title {
+            color: #2c3e50;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .chapter-summary {
+            color: #666;
+            margin-bottom: 1rem;
+        }
+
+        .study-tools {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .tool-btn {
+            padding: 0.3rem 0.8rem;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .tool-btn:hover {
+            background: #2980b9;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            max-width: 90%;
+            max-height: 90%;
+            overflow-y: auto;
+            width: 800px;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .mcq-container {
+            margin: 1rem 0;
+        }
+
+        .mcq-question {
+            font-weight: bold;
+            margin-bottom: 1rem;
+            color: #2c3e50;
+        }
+
+        .mcq-options {
+            display: grid;
+            gap: 0.5rem;
+        }
+
+        .mcq-option {
+            padding: 0.8rem;
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .mcq-option:hover {
+            background: #e3f2fd;
+            border-color: #3498db;
+        }
+
+        .mcq-option.correct {
+            background: #d4edda;
+            border-color: #28a745;
+        }
+
+        .mcq-option.incorrect {
+            background: #f8d7da;
+            border-color: #dc3545;
+        }
+
+        .flashcard {
+            background: #fff;
+            border-radius: 10px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            height: 200px;
+            position: relative;
+        }
+
+        .flashcard.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .flashcard-front, .flashcard-back {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            padding: 1rem;
+        }
+
+        .flashcard-front {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .flashcard-back {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            color: white;
+            transform: rotateY(180deg);
+        }
+
+        .mindmap {
+            width: 100%;
+            height: 400px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background: #f9f9f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+        }
+
+        .key-points {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+
+        .key-points h3 {
+            color: #2c3e50;
+            margin-bottom: 1rem;
+        }
+
+        .key-points ul {
+            padding-left: 1.5rem;
+        }
+
+        .key-points li {
+            margin-bottom: 0.5rem;
+            color: #555;
+        }
+
+        @media (max-width: 768px) {
+            .nav-tabs {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .chapter-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .content {
+                padding: 1rem;
+            }
+
+            .modal-content {
+                padding: 1rem;
+                width: 95%;
+            }
+        }
+
+        .search-container {
+            margin-bottom: 2rem;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e9ecef;
+            border-radius: 25px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        .search-input:focus {
+            border-color: #3498db;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #e9ecef;
+            border-radius: 5px;
+            margin: 1rem 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #3498db, #2980b9);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>📚 English 12th HSC - Complete Study Guide</h1>
+            <nav class="nav-tabs">
+                <button class="nav-tab active" onclick="showSection('home')">🏠 Home</button>
+                <button class="nav-tab" onclick="showSection('prose')">📖 Prose</button>
+                <button class="nav-tab" onclick="showSection('poetry')">🎭 Poetry</button>
+                <button class="nav-tab" onclick="showSection('writing')">✍️ Writing Skills</button>
+                <button class="nav-tab" onclick="showSection('novel')">📚 Novel/Drama</button>
+                <button class="nav-tab" onclick="showSection('progress')">📊 Progress</button>
+            </nav>
+        </header>
+
+        <main class="content">
+            <!-- Home Section -->
+            <section id="home" class="section active">
+                <div class="search-container">
+                    <input type="text" class="search-input" placeholder="🔍 Search topics, chapters, or concepts..." onkeyup="searchContent(this.value)">
+                </div>
+                
+                <h2>Welcome to Your Complete HSC English Study Companion</h2>
+                <p>Master your HSC English with comprehensive study materials, interactive quizzes, flashcards, and detailed summaries for every chapter.</p>
+                
+                <div class="chapter-grid">
+                    <div class="chapter-card">
+                        <h3 class="chapter-title">📖 Prose Section</h3>
+                        <p class="chapter-summary">8 comprehensive chapters with detailed analysis, summaries, and study materials.</p>
+                        <div class="study-tools">
+                            <button class="tool-btn" onclick="showSection('prose')">Explore Prose</button>
+                        </div>
+                    </div>
+                    
+                    <div class="chapter-card">
+                        <h3 class="chapter-title">🎭 Poetry Section</h3>
+                        <p class="chapter-summary">8 beautiful poems with line-by-line analysis and poetic devices.</p>
+                        <div class="study-tools">
+                            <button class="tool-btn" onclick="showSection('poetry')">Explore Poetry</button>
+                        </div>
+                    </div>
+                    
+                    <div class="chapter-card">
+                        <h3 class="chapter-title">✍️ Writing Skills</h3>
+                        <p class="chapter-summary">Master all writing formats with examples and practice exercises.</p>
+                        <div class="study-tools">
+                            <button class="tool-btn" onclick="showSection('writing')">Practice Writing</button>
+                        </div>
+                    </div>
+                    
+                    <div class="chapter-card">
+                        <h3 class="chapter-title">📚 Novels & Drama</h3>
+                        <p class="chapter-summary">Complete analysis of prescribed novels and dramatic works.</p>
+                        <div class="study-tools">
+                            <button class="tool-btn" onclick="showSection('novel')">Study Literature</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Prose Section -->
+            <section id="prose" class="section">
+                <h2>📖 Prose Section</h2>
+                <div class="chapter-grid" id="prose-chapters">
+                    <!-- Prose chapters will be loaded here -->
+                </div>
+            </section>
+
+            <!-- Poetry Section -->
+            <section id="poetry" class="section">
+                <h2>🎭 Poetry Section</h2>
+                <div class="chapter-grid" id="poetry-chapters">
+                    <!-- Poetry chapters will be loaded here -->
+                </div>
+            </section>
+
+            <!-- Writing Skills Section -->
+            <section id="writing" class="section">
+                <h2>✍️ Writing Skills</h2>
+                <div class="chapter-grid" id="writing-chapters">
+                    <!-- Writing skills chapters will be loaded here -->
+                </div>
+            </section>
+
+            <!-- Novel/Drama Section -->
+            <section id="novel" class="section">
+                <h2>📚 Novel & Drama</h2>
+                <div class="chapter-grid" id="novel-chapters">
+                    <!-- Novel chapters will be loaded here -->
+                </div>
+            </section>
+
+            <!-- Progress Section -->
+            <section id="progress" class="section">
+                <h2>📊 Your Learning Progress</h2>
+                <div class="key-points">
+                    <h3>Overall Progress</h3>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="overall-progress"></div>
+                    </div>
+                    <p id="progress-text">0% Complete</p>
+                </div>
+                
+                <div class="chapter-grid">
+                    <div class="chapter-card">
+                        <h3 class="chapter-title">📖 Prose Mastery</h3>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 45%"></div>
+                        </div>
+                        <p>5/8 chapters completed</p>
+                    </div>
+                    
+                    <div class="chapter-card">
+                        <h3 class="chapter-title">🎭 Poetry Analysis</h3>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 62%"></div>
+                        </div>
+                        <p>5/8 poems analyzed</p>
+                    </div>
+                    
+                    <div class="chapter-card">
+                        <h3 class="chapter-title">✍️ Writing Skills</h3>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 33%"></div>
+                        </div>
+                        <p>2/6 skills practiced</p>
+                    </div>
+                    
+                    <div class="chapter-card">
+                        <h3 class="chapter-title">📚 Literature Study</h3>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 75%"></div>
+                        </div>
+                        <p>3/4 works completed</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modal for detailed content -->
+    <div id="contentModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal()">&times;</span>
+            <div id="modalContent">
+                <!-- Dynamic content will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample data structure for all content
+        const studyData = {
+            prose: [
+                {
+                    title: "An Astrologer's Day",
+                    author: "R.K. Narayan",
+                    summary: "A compelling story about an astrologer who encounters his past in an unexpected way. The story explores themes of fate, guilt, and redemption through masterful storytelling.",
+                    keyPoints: [
+                        "Set in a bustling marketplace",
+                        "Protagonist is a fake astrologer with a dark past",
+                        "Themes of fate vs. free will",
+                        "Ironic twist ending",
+                        "Realistic portrayal of Indian village life"
+                    ],
+                    mcqs: [
+                        {
+                            question: "Who is the author of 'An Astrologer's Day'?",
+                            options: ["R.K. Narayan", "Mulk Raj Anand", "Raja Rao", "Kamala Das"],
+                            correct: 0
+                        },
+                        {
+                            question: "What was the astrologer's real profession before?",
+                            options: ["Teacher", "Farmer", "Merchant", "The story doesn't specify"],
+                            correct: 3
+                        }
+                    ],
+                    flashcards: [
+                        { front: "What is the main theme?", back: "Fate vs. Free Will, Guilt and Redemption" },
+                        { front: "Setting of the story?", back: "Indian marketplace/village" },
+                        { front: "Literary technique used?", back: "Irony and dramatic tension" }
+                    ]
+                },
+                {
+                    title: "On Saying 'Please'",
+                    author: "A.G. Gardiner",
+                    summary: "A thoughtful essay on the importance of politeness and good manners in society. Gardiner argues that courtesy is not just social nicety but essential for civilized living.",
+                    keyPoints: [
+                        "Importance of politeness in daily life",
+                        "Impact of rudeness on society",
+                        "Good manners as a mark of civilization",
+                        "Examples from real-life situations",
+                        "The law vs. social courtesy"
+                    ],
+                    mcqs: [
+                        {
+                            question: "What is the main argument in 'On Saying Please'?",
+                            options: ["Laws should be stricter", "Politeness is essential for society", "People are becoming ruder", "Education needs reform"],
+                            correct: 1
+                        }
+                    ],
+                    flashcards: [
+                        { front: "Main theme of the essay?", back: "Importance of politeness and good manners" },
+                        { front: "Author's view on law vs courtesy?", back: "Courtesy is more important than legal obligations" }
+                    ]
+                },
+                {
+                    title: "The Cop and the Anthem",
+                    author: "O. Henry",
+                    summary: "A humorous story about Soapy, a homeless man who tries to get arrested to spend winter in jail, but fate has other plans for him.",
+                    keyPoints: [
+                        "Protagonist: Soapy, a homeless man",
+                        "Ironic attempts to get arrested",
+                        "Theme of redemption and change",
+                        "Social commentary on homelessness",
+                        "O. Henry's signature twist ending"
+                    ],
+                    mcqs: [
+                        {
+                            question: "Why does Soapy want to get arrested?",
+                            options: ["He committed a crime", "To spend winter in jail", "He's mentally ill", "For attention"],
+                            correct: 1
+                        }
+                    ],
+                    flashcards: [
+                        { front: "Who is the protagonist?", back: "Soapy, a homeless man" },
+                        { front: "What does Soapy want?", back: "To get arrested for winter shelter" }
+                    ]
+                },
+                {
+                    title: "Big Data – Big Insights",
+                    author: "Various",
+                    summary: "An informative piece about the role of big data in modern society and how it provides valuable insights across various fields.",
+                    keyPoints: [
+                        "Definition and scope of big data",
+                        "Applications in different sectors",
+                        "Benefits and challenges",
+                        "Future implications",
+                        "Privacy and ethical concerns"
+                    ],
+                    mcqs: [
+                        {
+                            question: "What is big data primarily used for?",
+                            options: ["Storage", "Analysis and insights", "Entertainment", "Communication"],
+                            correct: 1
+                        }
+                    ],
+                    flashcards: [
+                        { front: "What is big data?", back: "Large volumes of data analyzed for insights" },
+                        { front: "Main benefit of big data?", back: "Better decision making through insights" }
+                    ]
+                },
+                {
+                    title: "The New Dress",
+                    author: "Virginia Woolf",
+                    summary: "A psychological story exploring themes of self-consciousness, social anxiety, and the inner life of Mabel Waring at a party.",
+                    keyPoints: [
+                        "Stream of consciousness technique",
+                        "Social anxiety and self-doubt",
+                        "Class consciousness",
+                        "Women's psychology",
+                        "Modernist literary style"
+                    ],
+                    mcqs: [
+                        {
+                            question: "What literary technique does Woolf use?",
+                            options: ["Third person narrative", "Stream of consciousness", "First person", "Dialogue"],
+                            correct: 1
+                        }
+                    ],
+                    flashcards: [
+                        { front: "Literary technique used?", back: "Stream of consciousness" },
+                        { front: "Main character's feeling?", back: "Self-consciousness and anxiety" }
+                    ]
+                },
+                {
+                    title: "Into the Wild",
+                    author: "Jon Krakauer",
+                    summary: "The story of Christopher McCandless who abandoned his possessions and savings to pursue a life in the Alaskan wilderness.",
+                    keyPoints: [
+                        "True story of Christopher McCandless",
+                        "Themes of freedom and self-discovery",
+                        "Critique of materialism",
+                        "Nature vs. civilization",
+                        "Tragic consequences of idealism"
+                    ],
+                    mcqs: [
+                        {
+                            question: "What did Christopher McCandless abandon?",
+                            options: ["His family only", "His possessions and money", "His education", "His friends"],
+                            correct: 1
+                        }
+                    ],
+                    flashcards: [
+                        { front: "Who is Christopher McCandless?", back: "Young man who went into Alaskan wilderness" },
+                        { front: "Main theme?", back: "Freedom, self-discovery, and nature" }
+                    ]
+                },
+                {
+                    title: "Why We Travel",
+                    author: "Pico Iyer",
+                    summary: "A reflective essay on the deeper motivations behind travel and how it transforms our understanding of ourselves and the world.",
+                    keyPoints: [
+                        "Travel as self-discovery",
+                        "Cultural understanding",
+                        "Breaking routine and comfort zones",
+                        "Personal transformation",
+                        "Global perspective"
+                    ],
+                    mcqs: [
+                        {
+                            question: "According to Iyer, why do we travel?",
+                            options: ["For vacation", "For self-discovery", "For business", "For adventure"],
+                            correct: 1
+                        }
+                    ],
+                    flashcards: [
+                        { front: "Main reason for travel?", back: "Self-discovery and transformation" },
+                        { front: "What does travel provide?", back: "Cultural understanding and global perspective" }
+                    ]
+                },
+                {
+                    title: "Voyaging Towards Excellence",
+                    author: "A.P.J. Abdul Kalam",
+                    summary: "Dr. Kalam's inspiring thoughts on achieving excellence through dedication, hard work, and continuous learning.",
+                    keyPoints: [
+                        "Definition of excellence",
+                        "Role of education and learning",
+                        "Importance of dreams and vision",
+                        "Hard work and dedication",
+                        "Serving society and nation"
+                    ],
+                    mcqs: [
+                        {
+                            question: "What does Kalam emphasize for achieving excellence?",
+                            options: ["Luck", "Hard work and dedication", "Money", "Connections"],
+                            correct: 1
+                        }
+                    ],
+                    flashcards: [
+                        { front: "How to achieve excellence?", back: "Through dedication, hard work, and continuous learning" },
+                        { front: "Kalam's main message?", back: "Dream, work hard, and serve society" }
+                    ]
+                }
+            ],
+            
+            poetry: [
+                {
+                    title: "Song of the Open Road",
+                    author: "Walt Whitman",
+                    summary: "A celebration of freedom, journey, and the open road as a metaphor for life's adventures and possibilities.",
+                    keyPoints: [
+                        "Free verse poetry",
+                        "Celebration of freedom and journey",
+                        "Democratic ideals",
+                        "Optimistic tone",
+                        "Nature and individualism"
+                    ],
+                    mcqs: [
+                        {
+                            question: "What does the 'open road' symbolize?",
+                            options: ["Travel", "Freedom and possibilities", "Difficulty", "Loneliness"],
+                            correct: 1
+                        }
+                    ],
+                    flashcards: [
+                        { front: "What is the poem's tone?", back: "Optimistic and celebratory" },
+                        { front: "Poetic form used?", back: "Free verse" }
+                    ]
+                },
+                {
+                    title: "Indian Weavers",
+                    author: "Sarojini Naidu",
+                    summary: "A beautiful poem depicting three stages of life through the metaphor of weavers creating different colored garments.",
+                    keyPoints: [
+                        "Three stages of life: birth, marriage, death",
+                        "Color symbolism",
+                        "Indian cultural context",
+                        "Metaphor of weaving",
+                        "Cyclical nature of life"
+                    ],
+                    mcqs: [
+                        {
+                            question: "What do the three different garments represent?",
+                            options: ["Seasons", "Stages of life", "Social classes", "Different festivals"],
+                            correct: 1
+                        }
+                    ],
+                    flashcards: [
+                        { front: "What do weavers symbolize?", back: "Life and its different stages" },
+                        { front: "Three stages mentioned?", back: "Birth, marriage, and death" }
+                    ]
+                },
+                {
+                    title: "The Inchcape Rock",
+                    author: "Robert Southey",
+                    summary: "A narrative poem about Sir Ralph the Rover who removes a warning bell from a dangerous rock, leading to his own destruction.",
+                    keyPoints: [
+                        "Theme of poetic justice",
+                        "Good vs. evil",
+                        "Consequences of selfish actions",
+                        "Maritime setting",
+                        "Moral lesson"
+                    ],
+                    mcqs: [
+                        {
+                            question: "What happens to Sir Ralph the Rover?",
+                            options: ["He becomes rich", "He destroys himself on the same rock", "He rules the sea", "He becomes a hero"],
+                            correct: 1
+                        }
+                    ],
+                    flashcards: [
+                        { front: "Main theme?", back: "Poetic justice and consequences of evil actions" },
+                        { front: "Who is the antagonist?", back: "Sir Ralph the Rover" }
+                    ]
+                },
+                {
+                    title: "Have You Earned Your Tomorrow",
+                    author: "Edgar Guest",
+                    summary: "A reflective poem questioning whether our daily actions make us worthy of the gift of tomorrow.",
+                    keyPoints: [
+                        "Self-reflection and introspection",
+                        "Daily actions and their impact",
+                        "Moral responsibility",
+                        "Simple language with deep meaning",
+                        "Universal appeal"
+                    ],
+                    mcqs: [
+                        {
+                            question: "What does the poem ask us to consider?",
+                            options: ["Our future plans", "Whether we deserve tomorrow", "Our past mistakes", "Our dreams"],
+                            correct: 1
+                        }
+                    ],
+                    flashcards: [
+                        { front: "Main question posed?", back: "Have you earned your tomorrow through good deeds?" },
+                        { front: "Poem's purpose?", back: "Self-reflection and moral evaluation" }
+                    ]
+                },
+                {
+                    title: "Father Returning Home",
+                    author: "Dilip Chitre",
+                    summary: "A poignant poem about an aging father's daily routine and the growing distance between family members in urban life.",
+                    keyPoints: [
+                        "Urban alienation",
+                        "Generation gap",
+                        "Father's sacrifice and loneliness",
+                        "Modern life's impact on family",
+                        "Vivid imagery"
+                    ],
+                    mcqs: [
+                        {
+                            question: "What does the poem primarily depict?",
+                            options: ["A happy family", "Urban alienation and loneliness", "Travel", "Work life"],
+                            correct: 1
+                        }
+                    ],
+                    flashcards: [
+                        { front: "Central theme?", back: "Urban alienation and generation gap" },
+                        { front: "Tone of the poem?", back: "Melancholic and sympathetic" }
+                    ]
+                },
+                {
+                    title: "Money",
+                    author: "William H. Davies",
+                    summary: "A philosophical poem about the relationship between money and happiness, suggesting that money should serve humanity, not control it.",
+                    keyPoints: [
+                        "Money as a servant, not master",
+                        "True happiness vs. material wealth",
+                        "Simple living philosophy",
+                        "Critique of materialism",
+                        "Wisdom in simplicity"
+                    ],
+                    mcqs: [
+                        {
+                            question: "What should money be according to the poet?",
+                            options: ["Everything", "A servant", "Hidden", "Spent quickly"],
+                            correct: 1
+                        }
+                    ],
+                    flashcards: [
+                        { front: "Poet's view on money?", back: "Money should be a servant, not a master" },
+                        { front: "Main message?", back: "True happiness comes from simple living" }
+                    ]
+                },
+                {
+                    title: "She Walks in Beauty",
+                    author: "Lord Byron",
+                    summary: "A romantic poem celebrating the perfect harmony of inner and outer beauty in a woman, comparing her to a cloudless night.",
+                    keyPoints: [
+                        "Romantic poetry",
+                        "Beauty - inner and outer",
+                        "Light and dark imagery",
+                        "Perfect harmony",
+                        "Lyrical quality"
+                    ],
+                    mcqs: [
+                        {
+                            question: "What does the poet compare the woman to?",
+                            options: ["A sunny day", "A cloudless night", "A flower", "A star"],
+                            correct: 1
+                        }
+                    ],
+                    flashcards: [
+                        { front: "Type of poem?", back: "Romantic lyric celebrating beauty" },
+                        { front: "Main comparison?", back: "Woman to a beautiful cloudless night" }
+                    ]
+                },
+                {
+                    title: "Small Towns and Rivers",
+                    author: "Mamang Dai",
+                    summary: "A nostalgic poem about small towns and rivers, exploring themes of memory, belonging, and the connection between places and identity.",
+                    keyPoints: [
+                        "Nostalgia and memory",
+                        "Connection to place",
+                        "Rivers as life symbols",
+                        "Small town life",
+                        "Identity and belonging"
+                    ],
+                    mcqs: [
+                        {
+                            question: "What do rivers symbolize in the poem?",
+                            options: ["Obstacles", "Life and continuity", "Separation", "Adventure"],
+                            correct: 1
+                        }
+                    ],
+                    flashcards: [
+                        { front: "Main emotion expressed?", back: "Nostalgia and belonging" },
+                        { front: "Rivers represent?", back: "Life, memory, and continuity" }
+                    ]
+                }
+            ],
+            
+            writing: [
+                {
+                    title: "Summary Writing",
+                    summary: "Learn the art of condensing large texts into concise, coherent summaries while retaining key information.",
+                    keyPoints: [
+                        "Identify main ideas and supporting details",
+                        "Use your own words (paraphrase)",
+                        "Maintain logical sequence",
+                        "Avoid personal opinions",
+                        "Keep it concise - usually 1/3 of original length"
+                    ],
+                    tips: [
+                        "Read the passage thoroughly multiple times",
+                        "Highlight or underline key points",
+                        "Write in present tense",
+                        "Use transitional words for flow",
+                        "Revise for clarity and conciseness"
+                    ]
+                },
+                {
+                    title: "Mind-mapping (Do Schools Really Kill Creativity?)",
+                    summary: "Create visual representations of ideas and concepts to enhance understanding and memory retention.",
+                    keyPoints: [
+                        "Central topic in the middle",
+                        "Branch out main ideas",
+                        "Use colors and symbols",
+                        "Keep it visual and organized",
+                        "Show relationships between concepts"
+                    ],
+                    tips: [
+                        "Start with a central image or word",
+                        "Use different colors for different branches",
+                        "Keep words brief",
+                        "Use images and symbols",
+                        "Make it personal and memorable"
+                    ]
+                },
+                {
+                    title: "Note Making",
+                    summary: "Develop systematic approaches to recording and organizing information for effective study and review.",
+                    keyPoints: [
+                        "Use abbreviations and symbols",
+                        "Create hierarchical structure",
+                        "Include main points and sub-points",
+                        "Use bullet points and numbering",
+                        "Leave space for additional notes"
+                    ],
+                    tips: [
+                        "Develop your own shorthand system",
+                        "Use headings and subheadings",
+                        "Include examples and illustrations",
+                        "Review and revise notes regularly",
+                        "Make notes searchable with keywords"
+                    ]
+                },
+                {
+                    title: "Statement of Purpose",
+                    summary: "Craft compelling personal statements that effectively communicate your goals, motivations, and qualifications.",
+                    keyPoints: [
+                        "Clear introduction with goals",
+                        "Academic and professional background",
+                        "Reasons for choosing the program/institution",
+                        "Future plans and career objectives",
+                        "Personal qualities and achievements"
+                    ],
+                    tips: [
+                        "Be specific and concrete",
+                        "Show, don't just tell",
+                        "Maintain professional tone",
+                        "Proofread carefully",
+                        "Keep within word limits"
+                    ]
+                },
+                {
+                    title: "Drafting a Virtual Message",
+                    summary: "Master the format and etiquette of digital communication in various professional and personal contexts.",
+                    keyPoints: [
+                        "Clear and concise subject line",
+                        "Appropriate greeting and closing",
+                        "Well-structured body",
+                        "Professional tone",
+                        "Proper formatting"
+                    ],
+                    tips: [
+                        "Know your audience",
+                        "Use bullet points for clarity",
+                        "Avoid jargon and slang",
+                        "Include call to action if needed",
+                        "Double-check recipient and attachments"
+                    ]
+                },
+                {
+                    title: "Group Discussion",
+                    summary: "Develop skills for effective participation in group discussions, including leadership, listening, and argumentation.",
+                    keyPoints: [
+                        "Active listening skills",
+                        "Clear and logical presentation",
+                        "Respectful disagreement",
+                        "Building on others' ideas",
+                        "Time management"
+                    ],
+                    tips: [
+                        "Prepare thoroughly on the topic",
+                        "Practice active listening",
+                        "Respect different viewpoints",
+                        "Use examples to support points",
+                        "Maintain eye contact and body language"
+                    ]
+                }
+            ],
+            
+            novel: [
+                {
+                    title: "History of Novel",
+                    summary: "Comprehensive overview of the development of the novel as a literary form from its origins to modern times.",
+                    keyPoints: [
+                        "Origins in 18th century England",
+                        "Key early novelists: Defoe, Richardson, Fielding",
+                        "Evolution through different periods",
+                        "Major movements: Realism, Modernism, Postmodernism",
+                        "Impact of social and cultural changes"
+                    ],
+                    periods: [
+                        "18th Century: Birth of the novel",
+                        "19th Century: Victorian novels and realism",
+                        "20th Century: Modernist experiments",
+                        "21st Century: Contemporary forms"
+                    ]
+                },
+                {
+                    title: "To Sir, with Love",
+                    author: "E.R. Braithwaite",
+                    summary: "An autobiographical novel about a black teacher's experiences in a tough London school, dealing with racism and education.",
+                    keyPoints: [
+                        "Autobiographical novel",
+                        "Themes of racism and education",
+                        "Character development of students",
+                        "Teacher-student relationships",
+                        "Social commentary on 1960s Britain"
+                    ],
+                    characters: [
+                        "Rick Braithwaite - Protagonist, teacher",
+                        "Denham - Fellow teacher",
+                        "Gillian Blanchard - Love interest",
+                        "Students - Tough working-class kids"
+                    ]
+                },
+                {
+                    title: "Around the World in Eighty Days",
+                    author: "Jules Verne",
+                    summary: "Adventure novel following Phileas Fogg's bet to travel around the world in 80 days, showcasing human determination and ingenuity.",
+                    keyPoints: [
+                        "Adventure and travel literature",
+                        "Themes of determination and punctuality",
+                        "Scientific progress and technology",
+                        "Cultural encounters",
+                        "Suspense and timing"
+                    ],
+                    characters: [
+                        "Phileas Fogg - Protagonist, gentleman",
+                        "Passepartout - Faithful servant",
+                        "Detective Fix - Pursuer",
+                        "Aouda - Rescued princess"
+                    ]
+                },
+                {
+                    title: "The Sign of Four",
+                    author: "Arthur Conan Doyle",
+                    summary: "Second Sherlock Holmes novel featuring the detective's methods in solving a complex mystery involving treasure and murder.",
+                    keyPoints: [
+                        "Detective fiction masterpiece",
+                        "Holmes's deductive methods",
+                        "Victorian London setting",
+                        "Mystery and suspense",
+                        "Introduction of Dr. Watson's romance"
+                    ],
+                    characters: [
+                        "Sherlock Holmes - Master detective",
+                        "Dr. Watson - Holmes's assistant",
+                        "Mary Morstan - Client and Watson's love interest",
+                        "Jonathan Small - Main antagonist"
+                    ]
+                }
+            ]
+        };
+
+        // Function to show different sections
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Show selected section
+            document.getElementById(sectionId).classList.add('active');
+            
+            // Update nav tabs
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Load content for the section
+            loadSectionContent(sectionId);
+        }
+
+        // Function to load content for each section
+        function loadSectionContent(sectionId) {
+            const section = document.getElementById(sectionId);
+            if (!section) return;
+
+            const container = section.querySelector('.chapter-grid');
+            if (!container) return;
+
+            const data = studyData[sectionId];
+            if (!data) return;
+
+            container.innerHTML = '';
+            
+            data.forEach((item, index) => {
+                const card = createChapterCard(item, sectionId, index);
+                container.appendChild(card);
+            });
+        }
+
+        // Function to create chapter cards
+        function createChapterCard(item, section, index) {
+            const card = document.createElement('div');
+            card.className = 'chapter-card';
+            card.innerHTML = `
+                <h3 class="chapter-title">${item.title}</h3>
+                ${item.author ? `<p><strong>Author:</strong> ${item.author}</p>` : ''}
+                <p class="chapter-summary">${item.summary}</p>
+                <div class="study-tools">
+                    <button class="tool-btn" onclick="showContent('${section}', ${index}, 'summary')">📝 Summary</button>
+                    <button class="tool-btn" onclick="showContent('${section}', ${index}, 'keypoints')">🎯 Key Points</button>
+                    <button class="tool-btn" onclick="showContent('${section}', ${index}, 'mcq')">❓ MCQ</button>
+                    <button class="tool-btn" onclick="showContent('${section}', ${index}, 'flashcards')">🃏 Flashcards</button>
+                    <button class="tool-btn" onclick="showContent('${section}', ${index}, 'mindmap')">🧠 Mind Map</button>
+                </div>
+            `;
+            return card;
+        }
+
+        // Function to show detailed content in modal
+        function showContent(section, index, type) {
+            const item = studyData[section][index];
+            const modal = document.getElementById('contentModal');
+            const modalContent = document.getElementById('modalContent');
+            
+            let content = '';
+            
+            switch(type) {
+                case 'summary':
+                    content = `
+                        <h2>${item.title}</h2>
+                        ${item.author ? `<h3>By: ${item.author}</h3>` : ''}
+                        <div class="key-points">
+                            <h3>📝 Detailed Summary</h3>
+                            <p>${item.summary}</p>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'keypoints':
+                    content = `
+                        <h2>${item.title} - Key Points</h2>
+                        <div class="key-points">
+                            <h3>🎯 Important Points to Remember</h3>
+                            <ul>
+                                ${item.keyPoints.map(point => `<li>${point}</li>`).join('')}
+                            </ul>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'mcq':
+                    content = `
+                        <h2>${item.title} - Practice Quiz</h2>
+                        <div id="mcq-container">
+                            ${item.mcqs ? item.mcqs.map((mcq, i) => `
+                                <div class="mcq-container">
+                                    <div class="mcq-question">Q${i+1}: ${mcq.question}</div>
+                                    <div class="mcq-options">
+                                        ${mcq.options.map((option, j) => `
+                                            <div class="mcq-option" onclick="selectMCQ(this, ${j}, ${mcq.correct})">${option}</div>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                            `).join('') : '<p>MCQs coming soon!</p>'}
+                        </div>
+                    `;
+                    break;
+                    
+                case 'flashcards':
+                    content = `
+                        <h2>${item.title} - Flashcards</h2>
+                        <p>Click on cards to flip them!</p>
+                        <div class="chapter-grid">
+                            ${item.flashcards ? item.flashcards.map((card, i) => `
+                                <div class="flashcard" onclick="flipCard(this)">
+                                    <div class="flashcard-front">
+                                        <h3>${card.front}</h3>
+                                    </div>
+                                    <div class="flashcard-back">
+                                        <h3>${card.back}</h3>
+                                    </div>
+                                </div>
+                            `).join('') : '<p>Flashcards coming soon!</p>'}
+                        </div>
+                    `;
+                    break;
+                    
+                case 'mindmap':
+                    content = `
+                        <h2>${item.title} - Mind Map</h2>
+                        <div class="mindmap">
+                            <p>Interactive mind map for ${item.title} will be displayed here.</p>
+                            <p>Key concepts: ${item.keyPoints ? item.keyPoints.slice(0, 3).join(', ') : 'Coming soon'}</p>
+                        </div>
+                    `;
+                    break;
+            }
+            
+            modalContent.innerHTML = content;
+            modal.style.display = 'block';
+        }
+
+        // Function to close modal
+        function closeModal() {
+            document.getElementById('contentModal').style.display = 'none';
+        }
+
+        // Function to handle MCQ selection
+        function selectMCQ(element, selected, correct) {
+            const container = element.parentElement;
+            const options = container.querySelectorAll('.mcq-option');
+            
+            // Remove previous selections
+            options.forEach(option => {
+                option.classList.remove('correct', 'incorrect');
+            });
+            
+            // Mark correct answer
+            options[correct].classList.add('correct');
+            
+            // Mark selected answer if incorrect
+            if (selected !== correct) {
+                element.classList.add('incorrect');
+            }
+        }
+
+        // Function to flip flashcards
+        function flipCard(card) {
+            card.classList.toggle('flipped');
+        }
+
+        // Search functionality
+        function searchContent(query) {
+            if (!query.trim()) {
+                // Show all content if search is empty
+                document.querySelectorAll('.chapter-card').forEach(card => {
+                    card.style.display = 'block';
+                });
+                return;
+            }
+            
+            query = query.toLowerCase();
+            document.querySelectorAll('.chapter-card').forEach(card => {
+                const title = card.querySelector('.chapter-title').textContent.toLowerCase();
+                const summary = card.querySelector('.chapter-summary').textContent.toLowerCase();
+                
+                if (title.includes(query) || summary.includes(query)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', function() {
+            // Update progress
+            updateProgress();
+            
+            // Close modal when clicking outside
+            window.onclick = function(event) {
+                const modal = document.getElementById('contentModal');
+                if (event.target === modal) {
+                    closeModal();
+                }
+            };
+        });
+
+        // Function to update progress
+        function updateProgress() {
+            // Simulate progress calculation
+            const progressFill = document.getElementById('overall-progress');
+            const progressText = document.getElementById('progress-text');
+            
+            if (progressFill && progressText) {
+                const progress = 55; // Example progress
+                progressFill.style.width = progress + '%';
+                progressText.textContent = progress + '% Complete';
+            }
+        }
+
+        // Load initial content
+        loadSectionContent('prose');
+        loadSectionContent('poetry');
+        loadSectionContent('writing');
+        loadSectionContent('novel');
+    </script>
+</body>
+</html>
