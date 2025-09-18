@@ -2,355 +2,38 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#2c3e50">
     <title>English 12th HSC - Complete Study App</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background: white;
-            min-height: 100vh;
-            box-shadow: 0 0 20px rgba(0,0,0,0.1);
-        }
-
-        .header {
-            background: linear-gradient(135deg, #2c3e50, #3498db);
-            color: white;
-            padding: 1rem 2rem;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .header h1 {
-            text-align: center;
-            margin-bottom: 1rem;
-        }
-
-        .nav-tabs {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-
-        .nav-tab {
-            padding: 0.5rem 1rem;
-            background: rgba(255,255,255,0.1);
-            border: none;
-            color: white;
-            border-radius: 25px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .nav-tab:hover, .nav-tab.active {
-            background: rgba(255,255,255,0.3);
-            transform: translateY(-2px);
-        }
-
-        .content {
-            padding: 2rem;
-        }
-
-        .section {
-            display: none;
-        }
-
-        .section.active {
-            display: block;
-        }
-
-        .chapter-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
-            margin-top: 2rem;
-        }
-
-        .chapter-card {
-            background: white;
-            border-radius: 10px;
-            padding: 1.5rem;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            border-left: 4px solid #3498db;
-            transition: transform 0.3s ease;
-            cursor: pointer;
-        }
-
-        .chapter-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-        }
-
-        .chapter-title {
-            color: #2c3e50;
-            margin-bottom: 1rem;
-            font-size: 1.2rem;
-        }
-
-        .chapter-summary {
-            color: #666;
-            margin-bottom: 1rem;
-        }
-
-        .study-tools {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            margin-top: 1rem;
-        }
-
-        .tool-btn {
-            padding: 0.3rem 0.8rem;
-            background: #3498db;
-            color: white;
-            border: none;
-            border-radius: 15px;
-            font-size: 0.8rem;
-            cursor: pointer;
-            transition: background 0.3s ease;
-        }
-
-        .tool-btn:hover {
-            background: #2980b9;
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.8);
-            z-index: 1000;
-        }
-
-        .modal-content {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: white;
-            padding: 2rem;
-            border-radius: 10px;
-            max-width: 90%;
-            max-height: 90%;
-            overflow-y: auto;
-            width: 800px;
-        }
-
-        .close-modal {
-            position: absolute;
-            top: 10px;
-            right: 15px;
-            font-size: 24px;
-            cursor: pointer;
-            color: #666;
-        }
-
-        .mcq-container {
-            margin: 1rem 0;
-        }
-
-        .mcq-question {
-            font-weight: bold;
-            margin-bottom: 1rem;
-            color: #2c3e50;
-        }
-
-        .mcq-options {
-            display: grid;
-            gap: 0.5rem;
-        }
-
-        .mcq-option {
-            padding: 0.8rem;
-            background: #f8f9fa;
-            border: 2px solid #e9ecef;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .mcq-option:hover {
-            background: #e3f2fd;
-            border-color: #3498db;
-        }
-
-        .mcq-option.correct {
-            background: #d4edda;
-            border-color: #28a745;
-        }
-
-        .mcq-option.incorrect {
-            background: #f8d7da;
-            border-color: #dc3545;
-        }
-
-        .flashcard {
-            background: #fff;
-            border-radius: 10px;
-            padding: 2rem;
-            text-align: center;
-            cursor: pointer;
-            transition: transform 0.6s;
-            transform-style: preserve-3d;
-            height: 200px;
-            position: relative;
-        }
-
-        .flashcard.flipped {
-            transform: rotateY(180deg);
-        }
-
-        .flashcard-front, .flashcard-back {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            backface-visibility: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 10px;
-            padding: 1rem;
-        }
-
-        .flashcard-front {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-        }
-
-        .flashcard-back {
-            background: linear-gradient(135deg, #f093fb, #f5576c);
-            color: white;
-            transform: rotateY(180deg);
-        }
-
-        .mindmap {
-            width: 100%;
-            height: 400px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            background: #f9f9f9;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #666;
-        }
-
-        .key-points {
-            background: #f8f9fa;
-            padding: 1.5rem;
-            border-radius: 8px;
-            margin: 1rem 0;
-        }
-
-        .key-points h3 {
-            color: #2c3e50;
-            margin-bottom: 1rem;
-        }
-
-        .key-points ul {
-            padding-left: 1.5rem;
-        }
-
-        .key-points li {
-            margin-bottom: 0.5rem;
-            color: #555;
-        }
-
-        @media (max-width: 768px) {
-            .nav-tabs {
-                flex-direction: column;
-                align-items: center;
-            }
-
-            .chapter-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .content {
-                padding: 1rem;
-            }
-
-            .modal-content {
-                padding: 1rem;
-                width: 95%;
-            }
-        }
-
-        .search-container {
-            margin-bottom: 2rem;
-        }
-
-        .search-input {
-            width: 100%;
-            padding: 1rem;
-            border: 2px solid #e9ecef;
-            border-radius: 25px;
-            font-size: 1rem;
-            outline: none;
-            transition: border-color 0.3s ease;
-        }
-
-        .search-input:focus {
-            border-color: #3498db;
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 10px;
-            background: #e9ecef;
-            border-radius: 5px;
-            margin: 1rem 0;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #3498db, #2980b9);
-            width: 0%;
-            transition: width 0.3s ease;
-        }
-    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
     <div class="container">
-        <header class="header">
-            <h1>📚 English 12th HSC - Complete Study Guide</h1>
-            <nav class="nav-tabs">
-                <button class="nav-tab active" onclick="showSection('home')">🏠 Home</button>
-                <button class="nav-tab" onclick="showSection('prose')">📖 Prose</button>
-                <button class="nav-tab" onclick="showSection('poetry')">🎭 Poetry</button>
-                <button class="nav-tab" onclick="showSection('writing')">✍️ Writing Skills</button>
-                <button class="nav-tab" onclick="showSection('novel')">📚 Novel/Drama</button>
-                <button class="nav-tab" onclick="showSection('progress')">📊 Progress</button>
+        <header class="header" role="banner">
+            <div class="header-row">
+                <h1>📚 English 12th HSC - Complete Study Guide</h1>
+                <div class="header-actions">
+                    <button id="darkToggle" class="icon-btn" aria-label="Toggle dark mode" title="Toggle dark mode">🌙</button>
+                </div>
+            </div>
+            <nav class="nav-tabs" role="tablist" aria-label="Primary">
+                <button id="home-tab" class="nav-tab active" data-target="home" role="tab" aria-selected="true">🏠 Home</button>
+                <button id="prose-tab" class="nav-tab" data-target="prose" role="tab" aria-selected="false">📖 Prose</button>
+                <button id="poetry-tab" class="nav-tab" data-target="poetry" role="tab" aria-selected="false">🎭 Poetry</button>
+                <button id="writing-tab" class="nav-tab" data-target="writing" role="tab" aria-selected="false">✍️ Writing Skills</button>
+                <button id="novel-tab" class="nav-tab" data-target="novel" role="tab" aria-selected="false">📚 Novel/Drama</button>
+                <button id="progress-tab" class="nav-tab" data-target="progress" role="tab" aria-selected="false">📊 Progress</button>
             </nav>
         </header>
 
         <main class="content">
             <!-- Home Section -->
-            <section id="home" class="section active">
+            <section id="home" class="section active" role="tabpanel" aria-labelledby="home-tab">
                 <div class="search-container">
-                    <input type="text" class="search-input" placeholder="🔍 Search topics, chapters, or concepts..." onkeyup="searchContent(this.value)">
+                    <input id="searchInput" type="text" class="search-input" placeholder="🔍 Search topics, chapters, or concepts..." aria-label="Search topics, chapters, or concepts">
                 </div>
                 
                 <h2>Welcome to Your Complete HSC English Study Companion</h2>
@@ -392,7 +75,7 @@
             </section>
 
             <!-- Prose Section -->
-            <section id="prose" class="section">
+            <section id="prose" class="section" role="tabpanel" aria-labelledby="prose-tab">
                 <h2>📖 Prose Section</h2>
                 <div class="chapter-grid" id="prose-chapters">
                     <!-- Prose chapters will be loaded here -->
@@ -400,7 +83,7 @@
             </section>
 
             <!-- Poetry Section -->
-            <section id="poetry" class="section">
+            <section id="poetry" class="section" role="tabpanel" aria-labelledby="poetry-tab">
                 <h2>🎭 Poetry Section</h2>
                 <div class="chapter-grid" id="poetry-chapters">
                     <!-- Poetry chapters will be loaded here -->
@@ -408,7 +91,7 @@
             </section>
 
             <!-- Writing Skills Section -->
-            <section id="writing" class="section">
+            <section id="writing" class="section" role="tabpanel" aria-labelledby="writing-tab">
                 <h2>✍️ Writing Skills</h2>
                 <div class="chapter-grid" id="writing-chapters">
                     <!-- Writing skills chapters will be loaded here -->
@@ -416,7 +99,7 @@
             </section>
 
             <!-- Novel/Drama Section -->
-            <section id="novel" class="section">
+            <section id="novel" class="section" role="tabpanel" aria-labelledby="novel-tab">
                 <h2>📚 Novel & Drama</h2>
                 <div class="chapter-grid" id="novel-chapters">
                     <!-- Novel chapters will be loaded here -->
@@ -424,7 +107,7 @@
             </section>
 
             <!-- Progress Section -->
-            <section id="progress" class="section">
+            <section id="progress" class="section" role="tabpanel" aria-labelledby="progress-tab">
                 <h2>📊 Your Learning Progress</h2>
                 <div class="key-points">
                     <h3>Overall Progress</h3>
@@ -472,18 +155,19 @@
     </div>
 
     <!-- Modal for detailed content -->
-    <div id="contentModal" class="modal">
-        <div class="modal-content">
-            <span class="close-modal" onclick="closeModal()">&times;</span>
+    <div id="contentModal" class="modal" aria-hidden="true" role="dialog" aria-modal="true">
+        <div class="modal-content" role="document">
+            <button class="close-modal" id="closeModalBtn" aria-label="Close">&times;</button>
             <div id="modalContent">
                 <!-- Dynamic content will be loaded here -->
             </div>
         </div>
     </div>
 
+    <script src="./app.js"></script>
     <script>
-        // Sample data structure for all content
-        const studyData = {
+        // Provide initial data for the app to load and enrich
+        window.__STUDY_DATA__ = {
             prose: [
                 {
                     title: "An Astrologer's Day",
@@ -1049,233 +733,6 @@
                 }
             ]
         };
-
-        // Function to show different sections
-        function showSection(sectionId) {
-            // Hide all sections
-            document.querySelectorAll('.section').forEach(section => {
-                section.classList.remove('active');
-            });
-            
-            // Show selected section
-            document.getElementById(sectionId).classList.add('active');
-            
-            // Update nav tabs
-            document.querySelectorAll('.nav-tab').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            event.target.classList.add('active');
-            
-            // Load content for the section
-            loadSectionContent(sectionId);
-        }
-
-        // Function to load content for each section
-        function loadSectionContent(sectionId) {
-            const section = document.getElementById(sectionId);
-            if (!section) return;
-
-            const container = section.querySelector('.chapter-grid');
-            if (!container) return;
-
-            const data = studyData[sectionId];
-            if (!data) return;
-
-            container.innerHTML = '';
-            
-            data.forEach((item, index) => {
-                const card = createChapterCard(item, sectionId, index);
-                container.appendChild(card);
-            });
-        }
-
-        // Function to create chapter cards
-        function createChapterCard(item, section, index) {
-            const card = document.createElement('div');
-            card.className = 'chapter-card';
-            card.innerHTML = `
-                <h3 class="chapter-title">${item.title}</h3>
-                ${item.author ? `<p><strong>Author:</strong> ${item.author}</p>` : ''}
-                <p class="chapter-summary">${item.summary}</p>
-                <div class="study-tools">
-                    <button class="tool-btn" onclick="showContent('${section}', ${index}, 'summary')">📝 Summary</button>
-                    <button class="tool-btn" onclick="showContent('${section}', ${index}, 'keypoints')">🎯 Key Points</button>
-                    <button class="tool-btn" onclick="showContent('${section}', ${index}, 'mcq')">❓ MCQ</button>
-                    <button class="tool-btn" onclick="showContent('${section}', ${index}, 'flashcards')">🃏 Flashcards</button>
-                    <button class="tool-btn" onclick="showContent('${section}', ${index}, 'mindmap')">🧠 Mind Map</button>
-                </div>
-            `;
-            return card;
-        }
-
-        // Function to show detailed content in modal
-        function showContent(section, index, type) {
-            const item = studyData[section][index];
-            const modal = document.getElementById('contentModal');
-            const modalContent = document.getElementById('modalContent');
-            
-            let content = '';
-            
-            switch(type) {
-                case 'summary':
-                    content = `
-                        <h2>${item.title}</h2>
-                        ${item.author ? `<h3>By: ${item.author}</h3>` : ''}
-                        <div class="key-points">
-                            <h3>📝 Detailed Summary</h3>
-                            <p>${item.summary}</p>
-                        </div>
-                    `;
-                    break;
-                    
-                case 'keypoints':
-                    content = `
-                        <h2>${item.title} - Key Points</h2>
-                        <div class="key-points">
-                            <h3>🎯 Important Points to Remember</h3>
-                            <ul>
-                                ${item.keyPoints.map(point => `<li>${point}</li>`).join('')}
-                            </ul>
-                        </div>
-                    `;
-                    break;
-                    
-                case 'mcq':
-                    content = `
-                        <h2>${item.title} - Practice Quiz</h2>
-                        <div id="mcq-container">
-                            ${item.mcqs ? item.mcqs.map((mcq, i) => `
-                                <div class="mcq-container">
-                                    <div class="mcq-question">Q${i+1}: ${mcq.question}</div>
-                                    <div class="mcq-options">
-                                        ${mcq.options.map((option, j) => `
-                                            <div class="mcq-option" onclick="selectMCQ(this, ${j}, ${mcq.correct})">${option}</div>
-                                        `).join('')}
-                                    </div>
-                                </div>
-                            `).join('') : '<p>MCQs coming soon!</p>'}
-                        </div>
-                    `;
-                    break;
-                    
-                case 'flashcards':
-                    content = `
-                        <h2>${item.title} - Flashcards</h2>
-                        <p>Click on cards to flip them!</p>
-                        <div class="chapter-grid">
-                            ${item.flashcards ? item.flashcards.map((card, i) => `
-                                <div class="flashcard" onclick="flipCard(this)">
-                                    <div class="flashcard-front">
-                                        <h3>${card.front}</h3>
-                                    </div>
-                                    <div class="flashcard-back">
-                                        <h3>${card.back}</h3>
-                                    </div>
-                                </div>
-                            `).join('') : '<p>Flashcards coming soon!</p>'}
-                        </div>
-                    `;
-                    break;
-                    
-                case 'mindmap':
-                    content = `
-                        <h2>${item.title} - Mind Map</h2>
-                        <div class="mindmap">
-                            <p>Interactive mind map for ${item.title} will be displayed here.</p>
-                            <p>Key concepts: ${item.keyPoints ? item.keyPoints.slice(0, 3).join(', ') : 'Coming soon'}</p>
-                        </div>
-                    `;
-                    break;
-            }
-            
-            modalContent.innerHTML = content;
-            modal.style.display = 'block';
-        }
-
-        // Function to close modal
-        function closeModal() {
-            document.getElementById('contentModal').style.display = 'none';
-        }
-
-        // Function to handle MCQ selection
-        function selectMCQ(element, selected, correct) {
-            const container = element.parentElement;
-            const options = container.querySelectorAll('.mcq-option');
-            
-            // Remove previous selections
-            options.forEach(option => {
-                option.classList.remove('correct', 'incorrect');
-            });
-            
-            // Mark correct answer
-            options[correct].classList.add('correct');
-            
-            // Mark selected answer if incorrect
-            if (selected !== correct) {
-                element.classList.add('incorrect');
-            }
-        }
-
-        // Function to flip flashcards
-        function flipCard(card) {
-            card.classList.toggle('flipped');
-        }
-
-        // Search functionality
-        function searchContent(query) {
-            if (!query.trim()) {
-                // Show all content if search is empty
-                document.querySelectorAll('.chapter-card').forEach(card => {
-                    card.style.display = 'block';
-                });
-                return;
-            }
-            
-            query = query.toLowerCase();
-            document.querySelectorAll('.chapter-card').forEach(card => {
-                const title = card.querySelector('.chapter-title').textContent.toLowerCase();
-                const summary = card.querySelector('.chapter-summary').textContent.toLowerCase();
-                
-                if (title.includes(query) || summary.includes(query)) {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-        }
-
-        // Initialize the app
-        document.addEventListener('DOMContentLoaded', function() {
-            // Update progress
-            updateProgress();
-            
-            // Close modal when clicking outside
-            window.onclick = function(event) {
-                const modal = document.getElementById('contentModal');
-                if (event.target === modal) {
-                    closeModal();
-                }
-            };
-        });
-
-        // Function to update progress
-        function updateProgress() {
-            // Simulate progress calculation
-            const progressFill = document.getElementById('overall-progress');
-            const progressText = document.getElementById('progress-text');
-            
-            if (progressFill && progressText) {
-                const progress = 55; // Example progress
-                progressFill.style.width = progress + '%';
-                progressText.textContent = progress + '% Complete';
-            }
-        }
-
-        // Load initial content
-        loadSectionContent('prose');
-        loadSectionContent('poetry');
-        loadSectionContent('writing');
-        loadSectionContent('novel');
     </script>
 </body>
 </html>
